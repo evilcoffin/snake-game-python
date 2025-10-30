@@ -121,18 +121,15 @@ def game_loop(screen, clock, snake, apple, grid_size, grid_width, grid_height):
 
 
 def main():
-    """Main game function."""
     pygame.init()
     screen_width = 800
     screen_height = 600
     grid_size = 20
     grid_width = screen_width // grid_size
     grid_height = screen_height // grid_size
-
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Snake Game")
     clock = pygame.time.Clock()
-
     snake = Snake(grid_width, grid_height, grid_size)
     apple = Apple(random.randint(0, grid_width - 1),
                   random.randint(0, grid_height - 1))
