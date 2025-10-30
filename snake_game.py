@@ -134,7 +134,7 @@ def main():
     apple = Apple(random.randint(0, grid_width - 1),
                   random.randint(0, grid_height - 1))
 
-    return game_loop(screen, clock, snake, apple, 
+    return game_loop(screen, clock, snake, apple,
                      grid_size, grid_width, grid_height)
 
 
