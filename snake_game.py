@@ -1,5 +1,5 @@
 """
-Snake game implementation using Pygame.
+Snake game implementation.
 """
 import pygame
 import random
@@ -7,36 +7,25 @@ import sys
 
 
 class GameObject:
-    """Base class for all game objects."""
+    """Base game object class."""
     
     def __init__(self, x, y, color):
-        """
-        Initialize game object.
-        
-        Args:
-            x (int): X coordinate
-            y (int): Y coordinate  
-            color (tuple): RGB color
-        """
         self.x = x
         self.y = y
         self.color = color
     
     def draw(self, screen, cell_size):
-        """Draw object on screen."""
         rect = (self.x * cell_size, self.y * cell_size, cell_size, cell_size)
         pygame.draw.rect(screen, self.color, rect)
 
 
 class Apple(GameObject):
-    """Apple class - snake food."""
+    """Apple food for snake."""
     
     def __init__(self, x, y):
-        """Initialize apple at given position."""
         super().__init__(x, y, (255, 0, 0))
     
     def respawn(self, width, height, snake_body):
-        """Move apple to random position."""
         while True:
             self.x = random.randint(0, width - 1)
             self.y = random.randint(0, height - 1)
@@ -45,35 +34,23 @@ class Apple(GameObject):
 
 
 class Snake:
-    """Snake class."""
+    """Snake player class."""
     
     def __init__(self, width, height, cell_size):
-        """
-        Initialize snake.
-        
-        Args:
-            width (int): Grid width
-            height (int): Grid height
-            cell_size (int): Cell size
-        """
         self.cell_size = cell_size
         self.width = width
         self.height = height
         self.direction = (1, 0)
         self.length = 1
         self.positions = [((width // 2), (height // 2))]
-        self.last = None
         self.color = (0, 255, 0)
     
     def get_head_position(self):
-        """Get snake head position."""
         return self.positions[0]
     
     def move(self):
-        """Move snake one step."""
         head_x, head_y = self.get_head_position()
         dir_x, dir_y = self.direction
-        
         new_x = (head_x + dir_x) % self.width
         new_y = (head_y + dir_y) % self.height
         new_position = (new_x, new_y)
@@ -83,31 +60,23 @@ class Snake:
             return False
         
         self.positions.insert(0, new_position)
-        
         if len(self.positions) > self.length:
-            self.last = self.positions.pop()
-        
+            self.positions.pop()
         return True
     
     def reset(self):
-        """Reset snake to initial state."""
         self.length = 1
         self.positions = [((self.width // 2), (self.height // 2))]
-        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-        self.direction = random.choice(directions)
-        self.last = None
+        self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
     
     def grow(self):
-        """Increase snake length."""
         self.length += 1
     
     def change_direction(self, direction):
-        """Change snake direction."""
         if (direction[0] * -1, direction[1] * -1) != self.direction:
             self.direction = direction
     
     def draw(self, screen):
-        """Draw snake on screen."""
         for position in self.positions:
             x_pos = position[0] * self.cell_size
             y_pos = position[1] * self.cell_size
@@ -118,23 +87,19 @@ class Snake:
 def main():
     """Main game function."""
     pygame.init()
+    screen_width = 800
+    screen_height = 600
+    grid_size = 20
+    grid_width = screen_width // grid_size
+    grid_height = screen_height // grid_size
     
-    SCREEN_WIDTH = 800
-    SCREEN_HEIGHT = 600
-    GRID_SIZE = 20
-    GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
-    GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
-    FPS = 10
-    
-    BACKGROUND_COLOR = (0, 0, 0)
-    
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Snake Game")
     clock = pygame.time.Clock()
     
-    snake = Snake(GRID_WIDTH, GRID_HEIGHT, GRID_SIZE)
-    apple = Apple(random.randint(0, GRID_WIDTH - 1),
-                  random.randint(0, GRID_HEIGHT - 1))
+    snake = Snake(grid_width, grid_height, grid_size)
+    apple = Apple(random.randint(0, grid_width - 1),
+                  random.randint(0, grid_height - 1))
     
     running = True
     while running:
@@ -152,18 +117,17 @@ def main():
                     snake.change_direction((1, 0))
         
         if not snake.move():
-            apple.respawn(GRID_WIDTH, GRID_HEIGHT, snake.positions)
+            apple.respawn(grid_width, grid_height, snake.positions)
         
         if snake.get_head_position() == (apple.x, apple.y):
             snake.grow()
-            apple.respawn(GRID_WIDTH, GRID_HEIGHT, snake.positions)
+            apple.respawn(grid_width, grid_height, snake.positions)
         
-        screen.fill(BACKGROUND_COLOR)
+        screen.fill((0, 0, 0))
         snake.draw(screen)
-        apple.draw(screen, GRID_SIZE)
+        apple.draw(screen, grid_size)
         pygame.display.flip()
-        
-        clock.tick(FPS)
+        clock.tick(10)
     
     pygame.quit()
     sys.exit()
