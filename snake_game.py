@@ -4,7 +4,6 @@ Snake game implementation using Pygame.
 import pygame
 import random
 import sys
-import time
 
 
 class GameObject:
